@@ -7,7 +7,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
@@ -45,6 +47,8 @@ namespace ERSaveManager
                 if (_e.Hotkey == quickLoad)
                     Utils.RestoreSnapshot(ERSave, 0);
             };
+
+            radioBtn_ZH.Checked = true;
 
             LoadData();
         }
@@ -117,7 +121,8 @@ namespace ERSaveManager
 
         private void btn_QuickLoad_Click(object sender, EventArgs e)
         {
-            Utils.RestoreSnapshot(ERSave, 0);
+            var record = dataGridView1.Rows[0].DataBoundItem as SaveItem.Record;
+            Save_Restore(record);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -166,12 +171,16 @@ namespace ERSaveManager
 
         private void CreateNewRecord()
         {
+            var data = Utils.CreateSnapshot(ERSave);
+            if (string.IsNullOrEmpty(data))
+                return;
+
             var record = new SaveItem.Record();
             var dt = DateTimeOffset.Now;
             record.Timestamp = dt.ToUnixTimeSeconds();
             record.Title = dt.ToString("yyyy-MM-dd HH:mm:ss");
             record.Hash = Utils.Sha1Sum(ERSaveFile);
-            record.Data = Utils.CreateSnapshot(ERSave);
+            record.Data = data;
             record.Cover = Utils.ScreenShot();
 
             ERSave.Slots.Add(record);
@@ -179,6 +188,7 @@ namespace ERSaveManager
 
             File.WriteAllText(Utils.data_ersm, jss.Serialize(ERSave));
             UpdateDataGridView();
+            ShowStateLabel(string.Format(Locale.STATE_RECORD_CREATE, record.Title));
         }
 
         private void UpdateDataGridView()
@@ -210,6 +220,7 @@ namespace ERSaveManager
         {
             var index = ERSave.Slots.IndexOf(record);
             Utils.RestoreSnapshot(ERSave, index);
+            ShowStateLabel(string.Format(Locale.STATE_RECORD_RESTORE, record.Title));
         }
 
         private void Save_Delete(SaveItem.Record record)
@@ -220,7 +231,20 @@ namespace ERSaveManager
                 ERSave.Slots.Remove(record);
                 File.WriteAllText(Utils.data_ersm, jss.Serialize(ERSave));
                 UpdateDataGridView();
+                ShowStateLabel(string.Format(Locale.STATE_RECORD_DELETE, record.Title));
             }
+        }
+
+        private void ShowStateLabel(string text)
+        {
+            SystemSounds.Asterisk.Play();
+            Task.Run(() =>
+            {
+                Invoke(new Action(() => label_Msg.Text = text));
+                Invoke(new Action(() => label_Msg.Visible = true));
+                Thread.Sleep(3000);
+                Invoke(new Action(() => label_Msg.Visible = false));
+            });
         }
     }
 }

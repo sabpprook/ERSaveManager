@@ -38,6 +38,7 @@ namespace ERSaveManager
         public static readonly string source_ersm = "source.ersm";
         public static readonly string delta_ersm = "delta.ersm";
         public static readonly string new_ersm = "new.ersm";
+        public static readonly string snapshot_jpg = "snapshot.jpg";
 
         public static string Sha1Sum(string fileName)
         {
@@ -68,10 +69,16 @@ namespace ERSaveManager
                 WorkingDirectory = Environment.CurrentDirectory
             }).WaitForExit();
 
-            var data = File.ReadAllBytes(delta_ersm);
-            File.Delete(delta_ersm);
-
-            return Convert.ToBase64String(data);
+            if (File.Exists(delta_ersm))
+            {
+                var data = File.ReadAllBytes(delta_ersm);
+                File.Delete(delta_ersm);
+                return Convert.ToBase64String(data);
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
 
         public static bool RestoreSnapshot(SaveItem save, int index)
@@ -102,7 +109,17 @@ namespace ERSaveManager
 
             if (Sha1Sum(new_ersm) == record.Hash)
             {
-                File.Replace(new_ersm, save.FileName, save.FileName + ".ersmbak");
+                var bakFile = Environment.CurrentDirectory + "\\" + Path.GetFileName(save.FileName) + ".bak";
+
+                var path = Path.GetDirectoryName(save.FileName);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                if (File.Exists(save.FileName))
+                    File.Replace(new_ersm, save.FileName, bakFile);
+                else
+                    File.Move(new_ersm, save.FileName);
+
                 return true;
             }
 
@@ -141,14 +158,21 @@ namespace ERSaveManager
                         {
                             g2.DrawImage(source, 0, 0, convert.Width, convert.Height);
                         }
-                        convert.Save("data.jpg", ImageFormat.Jpeg);
+                        convert.Save(snapshot_jpg, ImageFormat.Jpeg);
                     }
                 }
             }
-            var data = File.ReadAllBytes("data.jpg");
-            File.Delete("data.jpg");
 
-            return Convert.ToBase64String(data);
+            if (File.Exists(snapshot_jpg))
+            {
+                var data = File.ReadAllBytes(snapshot_jpg);
+                File.Delete(snapshot_jpg);
+                return Convert.ToBase64String(data);
+            }
+            else
+            {
+                return defaultJpeg;
+            }
         }
     }
 }

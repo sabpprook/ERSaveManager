@@ -37,29 +37,26 @@
             this.textBox1.Location = new System.Drawing.Point(12, 19);
             this.textBox1.Margin = new System.Windows.Forms.Padding(3, 10, 3, 6);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(660, 27);
+            this.textBox1.Size = new System.Drawing.Size(510, 27);
             this.textBox1.TabIndex = 0;
             this.textBox1.TabStop = false;
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btn_Confirm
             // 
-            this.btn_Confirm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Confirm.Location = new System.Drawing.Point(282, 55);
+            this.btn_Confirm.Location = new System.Drawing.Point(217, 65);
             this.btn_Confirm.Name = "btn_Confirm";
-            this.btn_Confirm.Size = new System.Drawing.Size(120, 34);
+            this.btn_Confirm.Size = new System.Drawing.Size(100, 34);
             this.btn_Confirm.TabIndex = 1;
             this.btn_Confirm.Text = "OK";
             this.btn_Confirm.UseVisualStyleBackColor = true;
             this.btn_Confirm.Click += new System.EventHandler(this.btn_Confirm_Click);
             // 
-            // fmRename
+            // fmDialogue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 101);
+            this.ClientSize = new System.Drawing.Size(534, 111);
             this.Controls.Add(this.btn_Confirm);
             this.Controls.Add(this.textBox1);
             this.Font = new System.Drawing.Font("Microsoft JhengHei UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
@@ -67,7 +64,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "fmRename";
+            this.Name = "fmDialogue";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Load += new System.EventHandler(this.fmRename_Load);
             this.ResumeLayout(false);
